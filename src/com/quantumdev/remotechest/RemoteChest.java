@@ -63,6 +63,7 @@ public class RemoteChest extends JavaPlugin {
 			try {
 				con = DriverManager.getConnection(host, username, password);
 				st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);	
+				st.executeUpdate("CREATE TABLE IF NOT EXISTS chests (`primarykey` INT( 11 ) NOT NULL AUTO_INCREMENT, `x` TEXT NOT NULL, `y` TEXT NOT NULL, `z` TEXT NOT NULL, `contents` TEXT NOT NULL, PRIMARY KEY (  `primarykey` )) ENGINE = INNODB DEFAULT CHARSET = latin1;");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
