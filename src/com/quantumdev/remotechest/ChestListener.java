@@ -12,6 +12,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -31,6 +32,13 @@ public class ChestListener implements Listener {
 		if (event.getMessage().toLowerCase().contains("chests reload")) {
 			reloadChests(p.getWorld());
 			p.sendMessage("[RemoteChest] All chests have been updated!");
+		}
+	}
+	
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		if (event.getBlock().getType().equals(Material.CHEST)) {
+			addChest((Chest) event.getBlock().getState());
 		}
 	}
 	
@@ -62,16 +70,14 @@ public class ChestListener implements Listener {
 		String contents = "";
 		ItemStack[] cs = c.getInventory().getContents();
 		boolean existing = false;
-		for (int i = 0; i < cs.length; i++) {
-			if (cs[i] != null) {
-				if (cs[i].getAmount() > 0) {
+		
+		for (int i = 0; i < cs.length; i++)
+			if (cs[i] != null)
+				if (cs[i].getAmount() > 0)
 					contents += cs[i].getAmount() + "x" + cs[i].getTypeId() + ((cs[i].getData().getData() != 0) ? ":" + cs[i].getData().getData() + ";" : ";");
-				}
-			}
-		}
+		
 		try {
 			ResultSet rs = plugin.st.executeQuery("SELECT * FROM chests WHERE x = '" + c.getX() + "' AND y = '" + c.getY() + "' AND z = '" + c.getZ() + "'");
-			
 			while (rs.next()) {
 				existing = true;
 				rs.updateString("contents", contents);
